@@ -4,23 +4,57 @@ import {
     Text,
     TouchableOpacity,
     ImageBackground,
-    StatusBar,
     StyleSheet,
-    Dimensions,
     TextInput,
     Image,
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
-
-
+import { AuthContext } from './context';
+import axios from 'axios';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 export default Login = ({ navigation }) => {
+
     const [getPasswordVisible, setPasswordVisble] = useState(false)
+    const [username, setUsername] = useState("sv1");
+    const [password, setPassword] = useState("123123az");
+    const { setToken, setCurrentUser } = React.useContext(AuthContext);
+
+    async function login(){
+        console.log(username);
+        console.log(password);
+        const userDTO = {username, password};
+        const response = await axios.post("http://192.168.1.5:8080/api/login", userDTO);
+        if(response.data) {
+            setToken(response.data);
+            const user_id = username.substring(2,99);
+            const response2 = await axios.get("http://192.168.1.5:8080/api/student/getStudentById/"+user_id, {headers: {"Authorization": response.data}});
+            setCurrentUser(response2.data);
+            Toast.show({
+                type: 'success',
+                text1: 'Login successfully',
+                text2: 'We"ll redirect you soon.. Please wait!'
+            });
+            setTimeout(() => {
+              navigation.navigate("Home");
+            }, 200);
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Wrong',
+                text2: 'Sai mật khẩu vui lòng thử lại!'
+            });
+        }
+        // setCurrentUser(response.data);
+        // navigation.navigate('Home');
+    }
+
     return (
         <ImageBackground style={{ height: '100%', width: '100%' }}
             source={require('../images/backgroundLogin.png')}
             resizeMode='stretch'
         >
+            <Toast position='top' />
             <View style={styles.partLogin1}>
                 <View style={styles.partLogin2}>
                     <View style={styles.partLogin}>
@@ -38,7 +72,9 @@ export default Login = ({ navigation }) => {
                             /* truyen gia tri cua task vao cho nut + */
 
                             placeholder='Nhập vào mã số sinh viên của bạn ?'
-                            style={styles.input} />
+                            style={styles.input}
+                            onChangeText={(e) => setUsername("sv" + e)}
+                            />
 
                     </View>
                     {/* 
@@ -60,6 +96,7 @@ export default Login = ({ navigation }) => {
                             // use interface Dot view
                             secureTextEntry={getPasswordVisible ? false : true}
                             autoCapitalize='none'
+                            onChangeText={(e) => setPassword(e)}
                         />
 
                         {/* Hiện/ tắt mật khẩu */}
@@ -88,9 +125,8 @@ export default Login = ({ navigation }) => {
                     </View>
                     {/* Dăng nhập */}
                     <TouchableOpacity
-                         
                         style={styles.btnAdd1}
-                        onPress={() => { navigation.navigate('Home') }}
+                        onPress={() => {login()}}
                     >
                         <View style={styles.btnAdd}
                         >

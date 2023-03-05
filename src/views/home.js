@@ -9,12 +9,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
+import { AuthContext } from './context';
 
 
 
 
 export default Home = (navigation) => {
     
+    const { currentUser } = React.useContext(AuthContext);
+
     return (
         <ScrollView>
 
@@ -56,7 +59,7 @@ export default Home = (navigation) => {
                     <View style={styles.titThongTinSV}>
                         <View style={styles.cot1TTSV}>
                             <Text style={styles.txtTTSV}>
-                                MSSV: 19528321
+                                MSSV: {currentUser.maSinhVien}
                             </Text>
                             <Text style={styles.txtTTSV}>
                                 Họ Tên: Lê Văn Tùng

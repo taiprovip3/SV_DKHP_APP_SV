@@ -8,6 +8,7 @@ import Login from './login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './home';
+import AuthProvider from './context';
 
 
 const Stack = createNativeStackNavigator();
@@ -15,15 +16,17 @@ const Stack = createNativeStackNavigator();
 
 function RootComponent() {
     return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login"
-                screenOptions={{ headerShown: false }}
-            >
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Home" component={Home} />
-                {/* <Stack.Screen name="Notification" component={NhacNhoMoi} /> */}
-            </Stack.Navigator>
-        </NavigationContainer>
+        <AuthProvider>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Login"
+                    screenOptions={{ headerShown: false }}
+                >
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Home" component={Home} />
+                    {/* <Stack.Screen name="Notification" component={NhacNhoMoi} /> */}
+                </Stack.Navigator>
+            </NavigationContainer>
+        </AuthProvider>
     );
 }
 
